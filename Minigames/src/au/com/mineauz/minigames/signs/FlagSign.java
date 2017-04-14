@@ -43,20 +43,20 @@ public class FlagSign implements MinigameSign {
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
 		event.setLine(1, ChatColor.GREEN + "Flag");
-		if(TeamColor.matchColor(event.getLine(2)) != null){
-			TeamColor col = TeamColor.matchColor(event.getLine(2));
+		if(TeamColor.matchColor(event.getLine(2).replaceAll("[^A-Za-z0-9]", "")) != null){
+			TeamColor col = TeamColor.matchColor(event.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 			event.setLine(2, col.getColor() + MinigameUtils.capitalize(col.toString()));
 		}
-		else if(event.getLine(2).equalsIgnoreCase("neutral")){
+		else if(event.getLine(2).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("neutral")){
 			event.setLine(2, ChatColor.GRAY + "Neutral");
 		}
-		else if(event.getLine(2).equalsIgnoreCase("capture") && !event.getLine(3).isEmpty()){
+		else if(event.getLine(2).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("capture") && !event.getLine(3).isEmpty()){
 			event.setLine(2, ChatColor.GREEN + "Capture");
-			if(TeamColor.matchColor(event.getLine(3)) != null){
-				TeamColor col = TeamColor.matchColor(event.getLine(3));
+			if(TeamColor.matchColor(event.getLine(3).replaceAll("[^A-Za-z0-9]", "")) != null){
+				TeamColor col = TeamColor.matchColor(event.getLine(3).replaceAll("[^A-Za-z0-9]", ""));
 				event.setLine(3, col.getColor() + MinigameUtils.capitalize(col.toString()));
 			}
-			else if(event.getLine(3).equalsIgnoreCase("neutral")){
+			else if(event.getLine(3).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("neutral")){
 				event.setLine(3, ChatColor.GRAY + "Neutral");
 			}
 			else{
@@ -81,15 +81,15 @@ public class FlagSign implements MinigameSign {
 			if(mgm.isSpectator(player)){
 				return false;
 			}
-			if(!sign.getLine(2).isEmpty() && ((LivingEntity)player.getPlayer()).isOnGround() && 
+			if(!sign.getLine(2).replaceAll("[^A-Za-z0-9]", "").isEmpty() && ((LivingEntity)player.getPlayer()).isOnGround() &&
 					!mgm.getMechanicName().equals("ctf") &&
-					!player.hasFlag(ChatColor.stripColor(sign.getLine(2)))){
-				TakeFlagEvent ev = new TakeFlagEvent(mgm, player, ChatColor.stripColor(sign.getLine(2)));
+					!player.hasFlag(ChatColor.stripColor(sign.getLine(2)).replaceAll("[^A-Za-z0-9]", ""))){
+				TakeFlagEvent ev = new TakeFlagEvent(mgm, player, ChatColor.stripColor(sign.getLine(2)).replaceAll("[^A-Za-z0-9]", ""));
 				Bukkit.getPluginManager().callEvent(ev);
 				if(!ev.isCancelled()){
-					player.addFlag(ChatColor.stripColor(sign.getLine(2)));
+					player.addFlag(ChatColor.stripColor(sign.getLine(2)).replaceAll("[^A-Za-z0-9]", ""));
 					player.sendMessage(ChatColor.AQUA + "[Minigames] " + ChatColor.WHITE + 
-							MinigameUtils.formStr("sign.flag.taken", ChatColor.stripColor(sign.getLine(2))));
+							MinigameUtils.formStr("sign.flag.taken", ChatColor.stripColor(sign.getLine(2)).replaceAll("[^A-Za-z0-9]", "")));
 				}
 				return true;
 			}

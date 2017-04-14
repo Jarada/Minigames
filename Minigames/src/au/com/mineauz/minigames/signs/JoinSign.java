@@ -42,15 +42,15 @@ public class JoinSign implements MinigameSign {
 
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
-		if(plugin.mdata.hasMinigame(event.getLine(2))){
+		if(plugin.mdata.hasMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", ""))){
 			event.setLine(1, ChatColor.GREEN + "Join");
-			event.setLine(2, plugin.mdata.getMinigame(event.getLine(2)).getName(false));
+			event.setLine(2, plugin.mdata.getMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", "")).getName(false));
 			if(Minigames.plugin.hasEconomy()){
-				if(!event.getLine(3).isEmpty() && !event.getLine(3).matches("\\$?[0-9]+(.[0-9]{2})?")){
+				if(!event.getLine(3).isEmpty() && !event.getLine(3).replaceAll("[^A-Za-z0-9$]", "").matches("\\$?[0-9]+(.[0-9]{2})?")){
 					event.getPlayer().sendMessage(ChatColor.RED + MinigameUtils.getLang("sign.join.invalidMoney"));
 					return false;
 				}
-				else if(event.getLine(3).matches("[0-9]+(.[0-9]{2})?")){
+				else if(event.getLine(3).replaceAll("[^0-9]", "").matches("[0-9]+(.[0-9]{2})?")){
 					event.setLine(3, "$" + event.getLine(3));
 				}
 			}
@@ -94,11 +94,11 @@ public class JoinSign implements MinigameSign {
 			invOk = player.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR;
 		}
 		if(invOk){
-			Minigame mgm = plugin.mdata.getMinigame(sign.getLine(2));
+			Minigame mgm = plugin.mdata.getMinigame(sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 			if(mgm != null && (!mgm.getUsePermissions() || player.getPlayer().hasPermission("minigame.join." + mgm.getName(false).toLowerCase()))){
 				if(mgm.isEnabled()){
 					if(!sign.getLine(3).isEmpty() && Minigames.plugin.hasEconomy()){
-						double amount = Double.parseDouble(sign.getLine(3).replace("$", ""));
+						double amount = Double.parseDouble(sign.getLine(3).replaceAll("[^0-9.]", ""));
 						if(Minigames.plugin.getEconomy().getBalance(player.getPlayer().getPlayer()) >= amount){
 							Minigames.plugin.getEconomy().withdrawPlayer(player.getPlayer().getPlayer(), amount);
 						}

@@ -52,8 +52,8 @@ public class ScoreboardSign implements MinigameSign{
 		// Parse minigame
 		Minigame minigame;
 		
-		if (plugin.mdata.hasMinigame(event.getLine(2))) {
-			minigame = plugin.mdata.getMinigame(event.getLine(2));
+		if (plugin.mdata.hasMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", ""))) {
+			minigame = plugin.mdata.getMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 		} else {
 			event.getPlayer().sendMessage(ChatColor.RED + "No Minigame found by the name " + event.getLine(2));
 			return false;
@@ -66,8 +66,8 @@ public class ScoreboardSign implements MinigameSign{
 		if (event.getLine(3).isEmpty()) {
 			width = ScoreboardDisplay.defaultWidth;
 			height = ScoreboardDisplay.defaultHeight;
-		} else if (event.getLine(3).matches("[0-9]+x[0-9]+")) {
-			String[] parts = event.getLine(3).split("x");
+		} else if (event.getLine(3).replaceAll("[^A-Za-z0-9]", "").matches("[0-9]+x[0-9]+")) {
+			String[] parts = event.getLine(3).replaceAll("[^A-Za-z0-9]", "").split("x");
 			width = Integer.parseInt(parts[0]);
 			height = Integer.parseInt(parts[1]);
 		} else {
@@ -99,7 +99,7 @@ public class ScoreboardSign implements MinigameSign{
 
 	@Override
 	public boolean signUse(Sign sign, MinigamePlayer player) {
-		Minigame minigame = plugin.mdata.getMinigame(sign.getLine(2));
+		Minigame minigame = plugin.mdata.getMinigame(sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 		if (minigame == null) {
 			return false;
 		}

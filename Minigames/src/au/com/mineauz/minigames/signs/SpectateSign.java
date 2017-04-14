@@ -41,9 +41,9 @@ public class SpectateSign implements MinigameSign {
 
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
-		if(plugin.mdata.hasMinigame(event.getLine(2))){
+		if(plugin.mdata.hasMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", ""))){
 			event.setLine(1, ChatColor.GREEN + "Spectate");
-			event.setLine(2, plugin.mdata.getMinigame(event.getLine(2)).getName(false));
+			event.setLine(2, plugin.mdata.getMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", "")).getName(false));
 			return true;
 		}
 		event.getPlayer().sendMessage(ChatColor.RED + MinigameUtils.formStr("minigame.error.noMinigameName", event.getLine(2)));
@@ -53,7 +53,7 @@ public class SpectateSign implements MinigameSign {
 	@Override
 	public boolean signUse(Sign sign, MinigamePlayer player) {
 		if(player.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR && !player.isInMinigame()){
-			Minigame mgm = plugin.mdata.getMinigame(sign.getLine(2));
+			Minigame mgm = plugin.mdata.getMinigame(sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 			if(mgm != null){
 				if(mgm.isEnabled()){
 					plugin.pdata.spectateMinigame(player, mgm);

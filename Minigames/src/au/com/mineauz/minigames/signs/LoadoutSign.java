@@ -44,7 +44,7 @@ public class LoadoutSign implements MinigameSign {
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
 		event.setLine(1, ChatColor.GREEN + "Loadout");
-		if(event.getLine(2).equalsIgnoreCase("menu"))
+		if(event.getLine(2).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("menu"))
 			event.setLine(2, ChatColor.GREEN + "Menu");
 		return true;
 	}
@@ -58,24 +58,24 @@ public class LoadoutSign implements MinigameSign {
 				return false;
 			}
 			
-			if(sign.getLine(2).equals(ChatColor.GREEN + "Menu")){
+			if(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "").equals(ChatColor.GREEN + "Menu")){
 				boolean nores = true;
-				if(sign.getLine(3).equalsIgnoreCase("respawn"))
+				if(sign.getLine(3).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("respawn"))
 					nores = false;
 				LoadoutModule.getMinigameModule(mgm).displaySelectionMenu(player, nores);
 			}
-			else if(loadout.hasLoadout(sign.getLine(2))){
-				if(!loadout.getLoadout(sign.getLine(2)).getUsePermissions() || player.getPlayer().hasPermission("minigame.loadout." + sign.getLine(2).toLowerCase())){
-					if(player.setLoadout(loadout.getLoadout(sign.getLine(2)))){
-						player.sendMessage(MinigameUtils.formStr("sign.loadout.equipped", sign.getLine(2)), null);
+			else if(loadout.hasLoadout(sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""))){
+				if(!loadout.getLoadout(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")).getUsePermissions() || player.getPlayer().hasPermission("minigame.loadout." + sign.getLine(2).toLowerCase())){
+					if(player.setLoadout(loadout.getLoadout(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")))){
+						player.sendMessage(MinigameUtils.formStr("sign.loadout.equipped", sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")), null);
 						
 						if(mgm.getType() == MinigameType.SINGLEPLAYER || 
 								mgm.hasStarted()){
-							if(sign.getLine(3).equalsIgnoreCase("respawn")){
+							if(sign.getLine(3).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("respawn")){
 								player.sendMessage(MinigameUtils.getLang("sign.loadout.nextRespawn"), null);
 							}
 							else{
-								loadout.getLoadout(sign.getLine(2)).equiptLoadout(player);
+								loadout.getLoadout(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")).equiptLoadout(player);
 							}
 						}
 					}
@@ -85,25 +85,25 @@ public class LoadoutSign implements MinigameSign {
 					player.sendMessage(MinigameUtils.formStr("sign.loadout.noPermisson", sign.getLine(2)), "error");
 				}
 			}
-			else if(plugin.mdata.hasLoadout(sign.getLine(2))){
-				if(!plugin.mdata.getLoadout(sign.getLine(2)).getUsePermissions() || player.getPlayer().hasPermission("minigame.loadout." + sign.getLine(2).toLowerCase())){
-					if(player.setLoadout(plugin.mdata.getLoadout(sign.getLine(2)))){
-						player.sendMessage(MinigameUtils.formStr("sign.loadout.equipped", sign.getLine(2)), null);
+			else if(plugin.mdata.hasLoadout(sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""))){
+				if(!plugin.mdata.getLoadout(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")).getUsePermissions() || player.getPlayer().hasPermission("minigame.loadout." + sign.getLine(2).toLowerCase())){
+					if(player.setLoadout(plugin.mdata.getLoadout(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")))){
+						player.sendMessage(MinigameUtils.formStr("sign.loadout.equipped", sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")), null);
 	
 						if(mgm.getType() == MinigameType.SINGLEPLAYER || 
 								mgm.hasStarted()){
-							if(sign.getLine(3).equalsIgnoreCase("respawn")){
+							if(sign.getLine(3).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("respawn")){
 								player.sendMessage(MinigameUtils.getLang("sign.loadout.nextRespawn"), null);
 							}
 							else{
-								plugin.mdata.getLoadout(sign.getLine(2)).equiptLoadout(player);
+								plugin.mdata.getLoadout(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")).equiptLoadout(player);
 							}
 						}
 					}
 					return true;
 				}
 				else{
-					player.sendMessage(MinigameUtils.formStr("sign.loadout.noPermission", sign.getLine(2)), "error");
+					player.sendMessage(MinigameUtils.formStr("sign.loadout.noPermission", sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")), "error");
 				}
 			}
 			else{

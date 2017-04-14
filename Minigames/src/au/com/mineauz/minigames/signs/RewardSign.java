@@ -69,7 +69,7 @@ public class RewardSign implements MinigameSign {
 	public boolean signUse(Sign sign, MinigamePlayer player) {
 		Location loc = sign.getLocation();
 		if(!MinigameUtils.isMinigameTool(player.getPlayer().getInventory().getItemInMainHand())){
-			String label = sign.getLine(2).toLowerCase();
+			String label = sign.getLine(2).replaceAll("[^A-Za-z0-9]", "").toLowerCase();
 			if(player.isInMinigame()){
 				if(!player.hasTempClaimedReward(label)){
 					if(mdata.hasRewardSign(loc)){

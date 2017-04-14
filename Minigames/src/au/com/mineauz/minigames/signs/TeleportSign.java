@@ -42,7 +42,7 @@ public class TeleportSign implements MinigameSign {
 			return false;
 		}
 		else{
-			if(!event.getLine(2).matches("-?[0-9]+,[0-9]+,-?[0-9]+")){
+			if(!event.getLine(2).replaceAll("[^A-Za-z0-9,-]", "").matches("-?[0-9]+,[0-9]+,-?[0-9]+")){
 				return false;
 			}
 		}
@@ -51,19 +51,19 @@ public class TeleportSign implements MinigameSign {
 
 	@Override
 	public boolean signUse(Sign sign, MinigamePlayer player) {
-		if(!sign.getLine(2).isEmpty() && sign.getLine(2).matches("-?[0-9]+,[0-9]+,-?[0-9]+")){
+		if(!sign.getLine(2).isEmpty() && sign.getLine(2).replaceAll("[^A-Za-z0-9,-]", "").matches("-?[0-9]+,[0-9]+,-?[0-9]+")){
 			int x;
 			int y;
 			int z;
-			String[] split = sign.getLine(2).split(",");
+			String[] split = sign.getLine(2).replaceAll("[^A-Za-z0-9,-]", "").split(",");
 			x = Integer.parseInt(split[0]);
 			y = Integer.parseInt(split[1]);
 			z = Integer.parseInt(split[2]);
 			
-			if(!sign.getLine(3).isEmpty() && sign.getLine(3).matches("-?[0-9]+,-?[0-9]+")){
+			if(!sign.getLine(3).isEmpty() && sign.getLine(3).replaceAll("[^A-Za-z0-9,-]", "").matches("-?[0-9]+,-?[0-9]+")){
 				float yaw;
 				float pitch;
-				String[] split2 = sign.getLine(3).split(",");
+				String[] split2 = sign.getLine(3).replaceAll("[^A-Za-z0-9,-]", "").split(",");
 				yaw = Float.parseFloat(split2[0]);
 				pitch = Float.parseFloat(split2[1]);
 				player.teleport(new Location(player.getPlayer().getWorld(), x + 0.5, y, z + 0.5, yaw, pitch));

@@ -45,10 +45,10 @@ public class ScoreSign implements MinigameSign{
 
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
-		if(event.getLine(2).matches("[0-9]+")){
+		if(event.getLine(2).replaceAll("[^A-Za-z0-9]", "").matches("[0-9]+")){
 			event.setLine(1, ChatColor.GREEN + "Score");
-			if(TeamColor.matchColor(event.getLine(3)) != null){
-				TeamColor col = TeamColor.matchColor(event.getLine(3));
+			if(TeamColor.matchColor(event.getLine(3).replaceAll("[^A-Za-z0-9]", "")) != null){
+				TeamColor col = TeamColor.matchColor(event.getLine(3).replaceAll("[^A-Za-z0-9]", ""));
 				event.setLine(3, col.getColor() + MinigameUtils.capitalize(col.toString()));
 			}
 			else
@@ -62,7 +62,7 @@ public class ScoreSign implements MinigameSign{
 	public boolean signUse(Sign sign, MinigamePlayer player) {
 		if(player.isInMinigame() && ((LivingEntity)player.getPlayer()).isOnGround()){
 			Minigame mg = player.getMinigame();
-			int score = Integer.parseInt(sign.getLine(2));
+			int score = Integer.parseInt(sign.getLine(2).replaceAll("[^0-9]", ""));
 			if(!mg.isTeamGame()){
 				if(player.hasClaimedScore(sign.getLocation())){
 					player.sendMessage(MinigameUtils.getLang("sign.score.alreadyUsed"), "error");
@@ -77,7 +77,7 @@ public class ScoreSign implements MinigameSign{
 				player.addClaimedScore(sign.getLocation());
 			}
 			else{
-				TeamColor steam = TeamColor.matchColor(ChatColor.stripColor(sign.getLine(3)));
+				TeamColor steam = TeamColor.matchColor(ChatColor.stripColor(sign.getLine(3)).replaceAll("[^A-Za-z0-9]", ""));
 				Team pteam = player.getTeam();
 				if(steam == null || !TeamsModule.getMinigameModule(mg).hasTeam(steam) || pteam.getColor() == steam){
 					if(Minigames.plugin.mdata.hasClaimedScore(mg, sign.getLocation(), 0)){

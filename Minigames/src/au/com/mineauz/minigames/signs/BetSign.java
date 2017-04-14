@@ -42,25 +42,25 @@ public class BetSign implements MinigameSign{
 
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
-		if(plugin.mdata.hasMinigame(event.getLine(2))){
+		if(plugin.mdata.hasMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", ""))){
 			event.setLine(1, ChatColor.GREEN + "Bet");
-			event.setLine(2, plugin.mdata.getMinigame(event.getLine(2)).getName(false));
-			if(event.getLine(3).matches("[0-9]+")){
+			event.setLine(2, plugin.mdata.getMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", "")).getName(false));
+			if(event.getLine(3).replaceAll("[^A-Za-z0-9]", "").matches("[0-9]+")){
 				event.setLine(3, "$" + event.getLine(3));
 			}
 			return true;
 		}
-		event.getPlayer().sendMessage(ChatColor.RED + "[Minigames] " + ChatColor.WHITE + MinigameUtils.formStr("minigame.error.noMinigameName", event.getLine(2)));
+		event.getPlayer().sendMessage(ChatColor.RED + "[Minigames] " + ChatColor.WHITE + MinigameUtils.formStr("minigame.error.noMinigameName", event.getLine(2).replaceAll("[^A-Za-z0-9]", "")));
 		return false;
 	}
 
 	@Override
 	public boolean signUse(Sign sign, MinigamePlayer player) {
-		Minigame mgm = plugin.mdata.getMinigame(sign.getLine(2));
+		Minigame mgm = plugin.mdata.getMinigame(sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 		if (mgm != null) {
 			boolean invOk = true;
 			boolean fullInv;
-			boolean moneyBet = sign.getLine(3).startsWith("$");
+			boolean moneyBet = sign.getLine(3).replaceAll("[^A-Za-z0-9]", "").startsWith("$");
 			
 			if (plugin.getConfig().getBoolean("requireEmptyInventory")) {
 				fullInv = true;
@@ -94,13 +94,13 @@ public class BetSign implements MinigameSign{
 						return false;
 					}
 					
-					if(!sign.getLine(3).startsWith("$")){
-						plugin.pdata.joinMinigame(player, plugin.mdata.getMinigame(sign.getLine(2)), true, 0.0);
+					if(!sign.getLine(3).replaceAll("[^0-9$]", "").startsWith("$")){
+						plugin.pdata.joinMinigame(player, plugin.mdata.getMinigame(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")), true, 0.0);
 					}
 					else{
 						if(plugin.hasEconomy()){
-							Double bet = Double.parseDouble(sign.getLine(3).replace("$", ""));
-							plugin.pdata.joinMinigame(player, plugin.mdata.getMinigame(sign.getLine(2)), true, bet);
+							Double bet = Double.parseDouble(sign.getLine(3).replaceAll("[^0-9.]", ""));
+							plugin.pdata.joinMinigame(player, plugin.mdata.getMinigame(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")), true, bet);
 							return true;
 						}
 						else{

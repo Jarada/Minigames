@@ -40,7 +40,7 @@ public class CheckpointSign implements MinigameSign {
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
 		event.setLine(1, ChatColor.GREEN + "Checkpoint");
-		if(event.getLine(2).equalsIgnoreCase("global")){
+		if(event.getLine(2).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("global")){
 			event.setLine(2, ChatColor.BLUE + "Global");
 		}
 		return true;
@@ -48,14 +48,14 @@ public class CheckpointSign implements MinigameSign {
 
 	@Override
 	public boolean signUse(Sign sign, MinigamePlayer player) {
-		if((player.isInMinigame() || (!player.isInMinigame() && sign.getLine(2).equals(ChatColor.BLUE + "Global"))) 
+		if((player.isInMinigame() || (!player.isInMinigame() && sign.getLine(2).replaceAll("[^A-Za-z0-9]", "").equals(ChatColor.BLUE + "Global")))
 				&& player.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR){
 			if(player.isInMinigame() && player.getMinigame().isSpectator(player)){
 				return false;
 			}
 			if(((LivingEntity)player.getPlayer()).isOnGround()){
 				Location newloc = player.getPlayer().getLocation();
-				if(!sign.getLine(2).equals(ChatColor.BLUE + "Global")){
+				if(!sign.getLine(2).replaceAll("[^A-Za-z0-9]", "").equals(ChatColor.BLUE + "Global")){
 					player.setCheckpoint(newloc);
 				}
 				else{

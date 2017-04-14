@@ -52,9 +52,10 @@ public class SignBase implements Listener{
 			signinfo[i] = ChatColor.stripColor(event.getLine(i));
 		}
 		if(signinfo[0].equalsIgnoreCase("[minigame]") || signinfo[0].equalsIgnoreCase("[mgm]") || signinfo[0].equalsIgnoreCase("[mg]")){
-			if(minigameSigns.containsKey(signinfo[1].toLowerCase())){
+			String signKey = signinfo[1].replaceAll("[^A-Za-z0-9]", "").toLowerCase().trim();
+			if(minigameSigns.containsKey(signKey)){
 				event.setLine(0, ChatColor.DARK_BLUE + "[Minigame]");
-				MinigameSign mgSign = minigameSigns.get(signinfo[1].toLowerCase());
+				MinigameSign mgSign = minigameSigns.get(signKey);
 				
 				if(mgSign.getCreatePermission() != null && !event.getPlayer().hasPermission(mgSign.getCreatePermission())){
 					event.setCancelled(true);
@@ -83,19 +84,21 @@ public class SignBase implements Listener{
 			Block cblock = event.getClickedBlock();
 			if(cblock.getState() instanceof Sign){
 				Sign sign = (Sign) cblock.getState();
-				if(sign.getLine(0).equals(ChatColor.DARK_BLUE + "[Minigame]") && 
-						minigameSigns.containsKey(ChatColor.stripColor(sign.getLine(1).toLowerCase()))){
-					MinigameSign mgSign = minigameSigns.get(ChatColor.stripColor(sign.getLine(1).toLowerCase()));
-					
-					if(mgSign.getUsePermission() != null && !event.getPlayer().hasPermission(mgSign.getUsePermission())){
+				if(sign.getLine(0).contains(ChatColor.DARK_BLUE + "[Minigame]")){
+					String signName = ChatColor.stripColor(sign.getLine(1).toLowerCase()).replaceAll("[^A-Za-z0-9]", "");
+					if (minigameSigns.containsKey(signName)) {
+						MinigameSign mgSign = minigameSigns.get(signName);
+
+						if (mgSign.getUsePermission() != null && !event.getPlayer().hasPermission(mgSign.getUsePermission())) {
+							event.setCancelled(true);
+							event.getPlayer().sendMessage(ChatColor.RED + "[Minigames] " + ChatColor.WHITE + mgSign.getUsePermissionMessage());
+							return;
+						}
+
 						event.setCancelled(true);
-						event.getPlayer().sendMessage(ChatColor.RED + "[Minigames] " + ChatColor.WHITE + mgSign.getUsePermissionMessage());
-						return;
+
+						mgSign.signUse(sign, Minigames.plugin.pdata.getMinigamePlayer(event.getPlayer()));
 					}
-					
-					event.setCancelled(true);
-					
-					mgSign.signUse(sign, Minigames.plugin.pdata.getMinigamePlayer(event.getPlayer()));
 				}
 			}
 		}
@@ -105,15 +108,17 @@ public class SignBase implements Listener{
 	private void signBreak(BlockBreakEvent event){
 		if(event.getBlock().getType() == Material.SIGN_POST || event.getBlock().getType() == Material.WALL_SIGN){
 			Sign sign = (Sign) event.getBlock().getState();
-			if(sign.getLine(0).equals(ChatColor.DARK_BLUE + "[Minigame]") && 
-					minigameSigns.containsKey(ChatColor.stripColor(sign.getLine(1).toLowerCase()))){
-				MinigameSign mgSign = minigameSigns.get(ChatColor.stripColor(sign.getLine(1).toLowerCase()));
-				
-				if(mgSign.getCreatePermission() != null && !event.getPlayer().hasPermission(mgSign.getCreatePermission())){
-					event.setCancelled(true);
-					return;
+			if(sign.getLine(0).contains(ChatColor.DARK_BLUE + "[Minigame]")){
+				String signName = ChatColor.stripColor(sign.getLine(1).toLowerCase()).replaceAll("[^A-Za-z0-9]", "");
+				if (minigameSigns.containsKey(signName)) {
+					MinigameSign mgSign = minigameSigns.get(signName);
+
+					if (mgSign.getCreatePermission() != null && !event.getPlayer().hasPermission(mgSign.getCreatePermission())) {
+						event.setCancelled(true);
+						return;
+					}
+					mgSign.signBreak(sign, Minigames.plugin.pdata.getMinigamePlayer(event.getPlayer()));
 				}
-				mgSign.signBreak(sign, Minigames.plugin.pdata.getMinigamePlayer(event.getPlayer()));
 			}
 		}
 	}

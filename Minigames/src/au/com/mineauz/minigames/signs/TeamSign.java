@@ -45,13 +45,13 @@ public class TeamSign implements MinigameSign {
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
 		event.setLine(1, ChatColor.GREEN + "Team");
-		if(TeamColor.matchColor(event.getLine(2)) != null ||
-				event.getLine(2).equalsIgnoreCase("neutral")){
-			if(event.getLine(2).equalsIgnoreCase("neutral")){
+		if(TeamColor.matchColor(event.getLine(2).replaceAll("[^A-Za-z0-9]", "")) != null ||
+				event.getLine(2).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("neutral")){
+			if(event.getLine(2).replaceAll("[^A-Za-z0-9]", "").equalsIgnoreCase("neutral")){
 				event.setLine(2, ChatColor.GRAY + "Neutral");
 			}
 			else{
-				TeamColor col = TeamColor.matchColor(event.getLine(2));
+				TeamColor col = TeamColor.matchColor(event.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 				event.setLine(2, col.getColor() + MinigameUtils.capitalize(col.toString().replace("_", " ")));
 			}
 			return true;
@@ -65,10 +65,10 @@ public class TeamSign implements MinigameSign {
 		if(player.isInMinigame()){
 			Minigame mgm = player.getMinigame();
 			if(mgm.isTeamGame()){
-				if(player.getTeam() != matchTeam(mgm, sign.getLine(2))){
-					if(!mgm.isWaitingForPlayers() && !sign.getLine(2).equals(ChatColor.GRAY + "Neutral")){
+				if(player.getTeam() != matchTeam(mgm, sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""))){
+					if(!mgm.isWaitingForPlayers() && !sign.getLine(2).replaceAll("[^A-Za-z0-9]", "").equals(ChatColor.GRAY + "Neutral")){
 						Team sm = null;
-						Team nt = matchTeam(mgm, sign.getLine(2));
+						Team nt = matchTeam(mgm, sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 						if(nt != null) {
 							if (!nt.isFull()) {
 								for(Team t : TeamsModule.getMinigameModule(mgm).getTeams()){
@@ -91,9 +91,9 @@ public class TeamSign implements MinigameSign {
 							}
 						}
 					}
-					else if(sign.getLine(2).equals(ChatColor.GRAY + "Neutral") || matchTeam(mgm, sign.getLine(2)) != player.getTeam()){
+					else if(sign.getLine(2).replaceAll("[^A-Za-z0-9]", "").equals(ChatColor.GRAY + "Neutral") || matchTeam(mgm, sign.getLine(2).replaceAll("[^A-Za-z0-9]", "")) != player.getTeam()){
 						Team cur = player.getTeam();
-						Team nt = matchTeam(mgm, sign.getLine(2));
+						Team nt = matchTeam(mgm, sign.getLine(2).replaceAll("[^A-Za-z0-9]", ""));
 						if(nt != null){
 							if(cur != null){
 								if(nt.getPlayers().size() - cur.getPlayers().size() < 2){

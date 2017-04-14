@@ -50,8 +50,8 @@ public class FinishSign implements MinigameSign {
 	@Override
 	public boolean signCreate(SignChangeEvent event) {
 		event.setLine(1, ChatColor.GREEN + "Finish");
-		if(!event.getLine(2).isEmpty() && plugin.mdata.hasMinigame(event.getLine(2))){
-			event.setLine(2, plugin.mdata.getMinigame(event.getLine(2)).getName(false));
+		if(!event.getLine(2).isEmpty() && plugin.mdata.hasMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", ""))){
+			event.setLine(2, plugin.mdata.getMinigame(event.getLine(2).replaceAll("[^A-Za-z0-9]", "")).getName(false));
 		}
 		else if(!event.getLine(2).isEmpty()){
 			event.getPlayer().sendMessage(ChatColor.RED + "[Minigames] " + ChatColor.WHITE + MinigameUtils.getLang("minigame.error.noMinigame"));
@@ -72,29 +72,8 @@ public class FinishSign implements MinigameSign {
 			if(!minigame.getFlags().isEmpty()){
 				if(((LivingEntity)player.getPlayer()).isOnGround()){
 					if(plugin.pdata.checkRequiredFlags(player, minigame.getName(false)).isEmpty()){
-						if(sign.getLine(2).isEmpty() || sign.getLine(2).equals(player.getMinigame().getName(false))){
-							if(player.getMinigame().isTeamGame()){
-								List<MinigamePlayer> w = new ArrayList<MinigamePlayer>(player.getTeam().getPlayers());
-								List<MinigamePlayer> l = new ArrayList<MinigamePlayer>(minigame.getPlayers().size() - player.getTeam().getPlayers().size());
-								for(Team t : TeamsModule.getMinigameModule(minigame).getTeams()){
-									if(t != player.getTeam())
-										l.addAll(t.getPlayers());
-								}
-								plugin.pdata.endMinigame(minigame, w, l);
-							}
-							else{
-								if(minigame.getType() == MinigameType.MULTIPLAYER){
-									List<MinigamePlayer> w = new ArrayList<MinigamePlayer>(1);
-									w.add(player);
-									List<MinigamePlayer> l = new ArrayList<MinigamePlayer>(minigame.getPlayers().size());
-									l.addAll(minigame.getPlayers());
-									l.remove(player);
-									plugin.pdata.endMinigame(minigame, w, l);
-								}
-								else
-									plugin.pdata.endMinigame(player);
-							}
-							
+						if(sign.getLine(2).isEmpty() || sign.getLine(2).replaceAll("[^A-Za-z0-9]", "").equals(player.getMinigame().getName(false))){
+							manageMinigameFinish(minigame, player);
 							plugin.pdata.partyMode(player, 3, 10L);
 						}
 					}
@@ -117,27 +96,7 @@ public class FinishSign implements MinigameSign {
 			}
 			else{
 				if(((LivingEntity)player.getPlayer()).isOnGround()){
-					if(player.getMinigame().isTeamGame()){
-						List<MinigamePlayer> w = new ArrayList<MinigamePlayer>(player.getTeam().getPlayers());
-						List<MinigamePlayer> l = new ArrayList<MinigamePlayer>(minigame.getPlayers().size() - player.getTeam().getPlayers().size());
-						for(Team t : TeamsModule.getMinigameModule(minigame).getTeams()){
-							if(t != player.getTeam())
-								l.addAll(t.getPlayers());
-						}
-						plugin.pdata.endMinigame(minigame, w, l);
-					}
-					else{
-						if(minigame.getType() == MinigameType.MULTIPLAYER){
-							List<MinigamePlayer> w = new ArrayList<MinigamePlayer>(1);
-							w.add(player);
-							List<MinigamePlayer> l = new ArrayList<MinigamePlayer>(minigame.getPlayers().size());
-							l.addAll(minigame.getPlayers());
-							l.remove(player);
-							plugin.pdata.endMinigame(minigame, w, l);
-						}
-						else
-							plugin.pdata.endMinigame(player);
-					}
+					manageMinigameFinish(minigame, player);
 					plugin.pdata.partyMode(player);
 					return true;
 				}
@@ -152,6 +111,30 @@ public class FinishSign implements MinigameSign {
 	@Override
 	public void signBreak(Sign sign, MinigamePlayer player) {
 		
+	}
+
+	private void manageMinigameFinish(Minigame minigame, MinigamePlayer player) {
+		if(player.getMinigame().isTeamGame()){
+			List<MinigamePlayer> w = new ArrayList<MinigamePlayer>(player.getTeam().getPlayers());
+			List<MinigamePlayer> l = new ArrayList<MinigamePlayer>(minigame.getPlayers().size() - player.getTeam().getPlayers().size());
+			for(Team t : TeamsModule.getMinigameModule(minigame).getTeams()){
+				if(t != player.getTeam())
+					l.addAll(t.getPlayers());
+			}
+			plugin.pdata.endMinigame(minigame, w, l);
+		}
+		else{
+			if(minigame.getType() == MinigameType.MULTIPLAYER){
+				List<MinigamePlayer> w = new ArrayList<MinigamePlayer>(1);
+				w.add(player);
+				List<MinigamePlayer> l = new ArrayList<MinigamePlayer>(minigame.getPlayers().size());
+				l.addAll(minigame.getPlayers());
+				l.remove(player);
+				plugin.pdata.endMinigame(minigame, w, l);
+			}
+			else
+				plugin.pdata.endMinigame(player);
+		}
 	}
 
 }
