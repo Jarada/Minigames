@@ -13,11 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -470,10 +466,10 @@ public class Events implements Listener{
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	private void entityDamageEntity(EntityDamageByEntityEvent event){
-		if(event.getEntity() instanceof Player && event.getDamager() instanceof Snowball){
+		if(event.getEntity() instanceof Player && (event.getDamager() instanceof Snowball || event.getDamager() instanceof Egg)){
 			MinigamePlayer ply = pdata.getMinigamePlayer((Player) event.getEntity());
 			if(ply == null) return;
-			Snowball sb = (Snowball) event.getDamager();
+			Projectile sb = (Projectile) event.getDamager();
 			if(ply.isInMinigame() && ply.getMinigame().hasPaintBallMode()){
 				if(sb.getShooter() instanceof Player){
 					MinigamePlayer shooter = pdata.getMinigamePlayer((Player) sb.getShooter());
